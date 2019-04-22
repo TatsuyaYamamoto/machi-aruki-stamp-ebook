@@ -1,10 +1,12 @@
 import { firestore } from "firebase/app";
+import DocumentData = firestore.DocumentData;
 import FieldValue = firestore.FieldValue;
 import DocumentReference = firestore.DocumentReference;
+import Timestamp = firestore.Timestamp;
 
 import { User } from "./User";
 
-interface StampDocument {
+interface StampDocument extends DocumentData {
   name: string;
   note: string;
   userRef: DocumentReference;
@@ -18,7 +20,7 @@ class Stamp implements StampDocument {
 
   public static async create(name: string, createdAt: Date, note?: string) {
     const ownRef = User.getOwnRef();
-    const newStampDoc: StampDocument = {
+    const newStampDoc: StampDocument & { createdAt: Date } = {
       name,
       note,
       createdAt,
@@ -37,15 +39,27 @@ class Stamp implements StampDocument {
 
   public static async getOwns(): Promise<any> {
     const ownRef = User.getOwnRef();
-    const ref = Stamp.getColRef().where("userRef", "==", ownRef);
-    return ref.get();
+    const query = Stamp.getColRef().where("userRef", "==", ownRef);
+    const querySnap = await query.get();
+
+    return querySnap.docs.map(docSnap => {
+      const doc = docSnap.data() as StampDocument;
+
+      return new Stamp(
+        doc.name,
+        doc.note,
+        doc.userRef,
+        (doc.createdAt as Timestamp).toDate(),
+        Stamp.getColRef().doc(docSnap.id)
+      );
+    });
   }
 
   public constructor(
     readonly name: string,
     readonly note: string,
     readonly userRef: DocumentReference,
-    readonly createdAt: FieldValue | Date,
+    readonly createdAt: Date,
     readonly ref: DocumentReference
   ) {}
 }
