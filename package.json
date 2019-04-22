@@ -13,7 +13,8 @@
     "build:client": "   webpack --config webpack.config.client.js    --progress",
     "build:functions": "webpack --config webpack.config.functions.js --progress",
     "serve": "firebase serve",
-    "predeploy": "yarn clean && yarn build",
+    "copy-deps": "yarn cpx '*{package.json,yarn.lock}' dist/functions && yarn --cwd dist/functions",
+    "predeploy": "yarn clean && yarn build && yarn copy-deps",
     "deploy": "firebase deploy --project machi-aruki-stamp-ebook-dev",
     "lint": "tslint --format stylish --project tsconfig.json --fix 'app/**/*.ts{,x}'",
     "format": "prettier --write 'app/**/*.{js,jsx,ts,tsx}'"
@@ -50,6 +51,7 @@
     "@types/react": "^16.8.14",
     "@types/react-dom": "^16.8.4",
     "@types/styled-components": "^4.1.14",
+    "cpx": "^1.5.0",
     "html-webpack-plugin": "^3.2.0",
     "husky": ">=1",
     "lint-staged": ">=8",
