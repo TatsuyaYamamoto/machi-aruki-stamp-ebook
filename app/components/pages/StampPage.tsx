@@ -2,7 +2,7 @@ import * as React from "react";
 
 import BottomNavigation from "../organisms/BottomNavigation";
 
-const App = () => {
+const StampPage = () => {
   return (
     <>
       Stamp!!
@@ -11,4 +11,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default StampPage;
