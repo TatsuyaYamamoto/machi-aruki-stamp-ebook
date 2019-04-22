@@ -2,6 +2,7 @@ import * as React from "react";
 
 import styled from "styled-components";
 
+import AppBar from "../organisms/AppBar";
 import BottomNavigation from "../organisms/BottomNavigation";
 
 const StyledBottomNav = styled(BottomNavigation)`
@@ -13,6 +14,7 @@ const StyledBottomNav = styled(BottomNavigation)`
 const StampPage = () => {
   return (
     <>
+      <AppBar />
       Stamp!!
       <StyledBottomNav />
     </>

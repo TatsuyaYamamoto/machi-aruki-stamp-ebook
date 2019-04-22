@@ -4,10 +4,11 @@ import styled from "styled-components";
 
 import GoogleMap from "../organisms/GoogleMap";
 import BottomNavigation from "../organisms/BottomNavigation";
+import AppBar from "../organisms/AppBar";
 
 const MapContainer = styled.div`
-  // TODO load '56px' of bottom nav height from material-ui theme
-  height: calc(100% - 56px);
+  // TODO load '56px' of bottom nav and '64px' app bar height from material-ui theme
+  height: calc(100% - (64px + 56px));
 `;
 
 const StyledBottomNav = styled(BottomNavigation)`
@@ -19,6 +20,7 @@ const StyledBottomNav = styled(BottomNavigation)`
 const MapPage = () => {
   return (
     <>
+      <AppBar />
       <MapContainer>
         <GoogleMap
           googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places"
