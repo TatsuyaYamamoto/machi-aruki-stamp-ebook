@@ -9,8 +9,12 @@ import {
 const GoogleMap = withScriptjs(
   withGoogleMap(() => (
     <ReactGoogleMap
-      defaultZoom={8}
-      defaultCenter={{ lat: -34.397, lng: 150.644 }}
+      defaultZoom={15}
+      defaultCenter={{ lat: 35.1034305, lng: 138.8577255 }}
+      defaultOptions={{
+        fullscreenControl: false,
+        zoomControl: false
+      }}
     />
   ))
 );
