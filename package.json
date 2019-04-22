@@ -8,10 +8,13 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "clean": "rm -rf dist",
     "build": "yarn build:client && yarn build:functions",
     "build:client": "   webpack --config webpack.config.client.js    --progress",
     "build:functions": "webpack --config webpack.config.functions.js --progress",
     "serve": "firebase serve",
+    "predeploy": "yarn clean && yarn build",
+    "deploy": "firebase deploy --project machi-aruki-stamp-ebook-dev",
     "lint": "tslint --format stylish --project tsconfig.json --fix 'app/**/*.ts{,x}'",
     "format": "prettier --write 'app/**/*.{js,jsx,ts,tsx}'"
   },
