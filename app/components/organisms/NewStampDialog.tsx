@@ -9,6 +9,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
+import { Stamp } from "../../domains/Stamp";
+
 interface Props {
   open: boolean;
   handleClose: () => void;
@@ -40,7 +42,9 @@ const NewStampDialog: React.FC<Props> = props => {
     });
   };
 
-  const onOkClicked = () => {
+  const onOkClicked = async () => {
+    await Stamp.create(form.name, form.date, form.note);
+
     handleClose();
   };
 
