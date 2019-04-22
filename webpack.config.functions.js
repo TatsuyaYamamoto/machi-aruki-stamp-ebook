@@ -1,20 +1,21 @@
 const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const nodeExternals = require("webpack-node-externals");
 
-const plugins = [
-  new HtmlWebpackPlugin({
-    template: "app/index.ejs"
-  })
-];
+const plugins = [];
 
 module.exports = {
+  mode: "development",
+
+  target: "node",
+
   devtool: "inline-source-map",
 
-  entry: "./app/index.tsx",
+  entry: "./app/index.functions.ts",
 
   output: {
-    filename: "bundle.js",
-    path: path.resolve(__dirname, "dist")
+    filename: "index.js",
+    path: path.resolve(__dirname, "dist", "functions"),
+    libraryTarget: "this"
   },
 
   resolve: {
@@ -34,6 +35,8 @@ module.exports = {
   devServer: {
     historyApiFallback: true
   },
+
+  externals: [nodeExternals()],
 
   plugins
 };
