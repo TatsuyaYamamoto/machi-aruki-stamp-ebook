@@ -7,18 +7,17 @@ import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
 
 import MapIcon from "@material-ui/icons/Map";
 import DoneIcon from "@material-ui/icons/Done";
-import RestoreIcon from "@material-ui/icons/Restore";
-import * as H from "history";
+import StoreIcon from "@material-ui/icons/Store";
 
 const toPath = (index: number): string => {
   if (index === 0) {
     return "/map";
   }
   if (index === 1) {
-    return "/stamp";
+    return "/store";
   }
   if (index === 2) {
-    return "/todo"; // TODO
+    return "/stamp";
   }
 };
 
@@ -26,10 +25,10 @@ const toIndex = (path: string): number => {
   if (path.startsWith("/map")) {
     return 0;
   }
-  if (path.startsWith("/stamp")) {
+  if (path.startsWith("/store")) {
     return 1;
   }
-  if (path.startsWith("/todo" /*TODO*/)) {
+  if (path.startsWith("/stamp")) {
     return 2;
   }
 
@@ -59,8 +58,8 @@ const BottomNavigation: React.FC<RouteComponentProps> = props => {
       {...others}
     >
       <BottomNavigationAction label="Map" icon={<MapIcon />} />
+      <BottomNavigationAction label="Store" icon={<StoreIcon />} />
       <BottomNavigationAction label="Stamp" icon={<DoneIcon />} />
-      <BottomNavigationAction label="Nearby" icon={<RestoreIcon />} />
     </MuiBottomNavigation>
   );
 };

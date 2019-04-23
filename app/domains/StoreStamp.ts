@@ -4,6 +4,8 @@ import DocumentData = firestore.DocumentData;
 interface StoreStampDocument extends DocumentData {
   name: string;
   description: string;
+  imageUrl: string;
+  geopoint: firestore.GeoPoint;
 }
 
 class StoreStamp implements StoreStampDocument {
@@ -17,13 +19,20 @@ class StoreStamp implements StoreStampDocument {
     const stamps = [];
     for (const snap of query.docs) {
       const doc = snap.data() as StoreStampDocument;
-      stamps.push(new StoreStamp(doc.name, doc.description));
+      const { name, description, imageUrl, geopoint } = doc;
+
+      stamps.push(new StoreStamp(name, description, imageUrl, geopoint));
     }
 
     return stamps;
   }
 
-  public constructor(readonly name: string, readonly description: string) {}
+  public constructor(
+    readonly name: string,
+    readonly description: string,
+    readonly imageUrl: string,
+    readonly geopoint: firestore.GeoPoint
+  ) {}
 }
 
 export { StoreStamp, StoreStampDocument };
