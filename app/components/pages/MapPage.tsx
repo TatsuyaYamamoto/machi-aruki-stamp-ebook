@@ -4,6 +4,16 @@ const { useState, useEffect } = React;
 
 import styled from "styled-components";
 
+import Drawer from "@material-ui/core/Drawer";
+import Button from "@material-ui/core/Button";
+import List from "@material-ui/core/List";
+import Divider from "@material-ui/core/Divider";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import InboxIcon from "@material-ui/icons/MoveToInbox";
+import MailIcon from "@material-ui/icons/Mail";
+
 import GoogleMap from "../organisms/GoogleMap";
 import BottomNavigation from "../organisms/BottomNavigation";
 import AppBar from "../organisms/AppBar";
@@ -55,6 +65,16 @@ const MapPage: FC = () => {
     });
   }, []);
 
+  const [stampDetail, setStampDetail] = useState<StoreStamp>(null);
+
+  const onMarkerClicked = (s: StoreStamp) => () => {
+    setStampDetail(s);
+  };
+
+  const closeStampDetailDrawer = () => {
+    setStampDetail(null);
+  };
+
   return (
     <>
       <>
@@ -74,6 +94,7 @@ const MapPage: FC = () => {
                     lat: s.geopoint.latitude,
                     lng: s.geopoint.longitude
                   }}
+                  onClick={onMarkerClicked(s)}
                 />
               );
             })}
@@ -82,6 +103,21 @@ const MapPage: FC = () => {
         <StyledFab onClick={onNewStampRequested} />
         <StyledBottomNav />
       </>
+
+      <Drawer
+        anchor="right"
+        open={!!stampDetail}
+        onClose={closeStampDetailDrawer}
+      >
+        {!!stampDetail && (
+          <div style={{ width: 300 }}>
+            <div>{stampDetail.name}</div>
+            <img width={200} height={200} src={stampDetail.imageUrl} />
+            <div>{stampDetail.description}</div>
+          </div>
+        )}
+      </Drawer>
+
       <NewStampDialog
         open={openNewStampDialog}
         handleClose={handleCloseNewStampDialog}
