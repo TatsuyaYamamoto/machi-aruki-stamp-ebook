@@ -15,6 +15,10 @@
         "function": "api"
       },
       {
+        "source": "/env/**",
+        "function": "env"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
