@@ -1,7 +1,14 @@
 import * as React from "react";
 const { useState, useEffect } = React;
+
 import styled from "styled-components";
 import LazyLoad from "react-lazyload";
+
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import Typography from "@material-ui/core/Typography";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import AppBar from "../organisms/AppBar";
 import BottomNavigation from "../organisms/BottomNavigation";
@@ -33,15 +40,17 @@ const StampPage = () => {
       <AppBar />
       {storeStamps.map(s => {
         return (
-          <div key={s.stampNumber}>
-            <div>{s.name}</div>
-            <div>{s.description}</div>
-            <div>{s.geopoint.latitude}</div>
-            <div>{s.geopoint.longitude}</div>
-            <LazyLoad>
-              <img src={s.imageUrl} />
-            </LazyLoad>
-          </div>
+          <ExpansionPanel key={s.stampNumber}>
+            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography>{s.name}</Typography>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+              <LazyLoad>
+                <img src={s.imageUrl} />
+              </LazyLoad>
+              <Typography>{s.description}</Typography>
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
         );
       })}
       <StyledBottomNav />
