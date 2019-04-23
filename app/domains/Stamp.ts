@@ -15,7 +15,7 @@ interface StampDocument extends DocumentData {
 
 class Stamp implements StampDocument {
   public static getColRef() {
-    return firestore().collection(`stamps`);
+    return firestore().collection(`my_stamps`);
   }
 
   public static async create(name: string, createdAt: Date, note?: string) {
