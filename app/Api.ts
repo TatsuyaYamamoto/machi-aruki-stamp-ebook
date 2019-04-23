@@ -33,7 +33,10 @@ apiRouter.post("/map", async (req, res) => {
 
     for (const placeMark of folder.Placemark) {
       const name = placeMark.name[0];
-      const description = placeMark.description[0];
+      const description = placeMark.description[0]
+        .replace(/<img.*\/>/, "")
+        .replace(/<br>/g, " ")
+        .trim();
       const imageUrl = placeMark.ExtendedData[0].Data[0].value[0];
       const coordinates = placeMark.Point[0].coordinates[0].trim().split(",");
       const latitude = Number(coordinates[1]);
