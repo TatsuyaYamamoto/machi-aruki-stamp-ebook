@@ -18,7 +18,13 @@ const StampPage = () => {
   const [storeStamps, setStoreStamps] = useState<StoreStamp[]>([]);
   useEffect(() => {
     StoreStamp.getAll().then(stamps => {
-      setStoreStamps(stamps);
+      setStoreStamps(
+        stamps.sort((a, b) => {
+          if (a.stampNumber < b.stampNumber) return 1;
+          if (a.stampNumber > b.stampNumber) return -1;
+          return 0;
+        })
+      );
     });
   }, []);
 
@@ -27,7 +33,7 @@ const StampPage = () => {
       <AppBar />
       {storeStamps.map(s => {
         return (
-          <div key={s.name}>
+          <div key={s.stampNumber}>
             <div>{s.name}</div>
             <div>{s.description}</div>
             <div>{s.geopoint.latitude}</div>

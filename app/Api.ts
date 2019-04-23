@@ -33,7 +33,10 @@ apiRouter.post("/map", async (req, res) => {
       continue;
     }
 
+    let stampNumber = 0;
     for (const placeMark of folder.Placemark) {
+      stampNumber += 1;
+
       const name = placeMark.name[0];
       const description = placeMark.description[0]
         .replace(/<img.*\/>/, "")
@@ -45,6 +48,7 @@ apiRouter.post("/map", async (req, res) => {
       const longitude = Number(coordinates[0]);
 
       stamps.push({
+        stampNumber,
         name,
         description,
         imageUrl,
