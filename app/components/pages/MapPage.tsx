@@ -1,6 +1,6 @@
 import * as React from "react";
 import FC = React.FC;
-const { useState } = React;
+const { useState, useEffect } = React;
 
 import styled from "styled-components";
 
@@ -9,6 +9,8 @@ import BottomNavigation from "../organisms/BottomNavigation";
 import AppBar from "../organisms/AppBar";
 import Fab from "../organisms/Fab";
 import NewStampDialog from "../organisms/NewStampDialog";
+import { StoreStamp } from "../../domains/StoreStamp";
+import { Marker } from "react-google-maps";
 
 const MapContainer = styled.div`
   // TODO load '56px' of bottom nav and '64px' app bar height from material-ui theme
@@ -39,17 +41,43 @@ const MapPage: FC = () => {
     setOpenNewStampDialog(false);
   };
 
+  const [storeStamps, setStoreStamps] = useState<StoreStamp[]>([]);
+  useEffect(() => {
+    // TODO share docs of store page
+    StoreStamp.getAll().then(stamps => {
+      setStoreStamps(
+        stamps.sort((a, b) => {
+          if (a.stampNumber < b.stampNumber) return 1;
+          if (a.stampNumber > b.stampNumber) return -1;
+          return 0;
+        })
+      );
+    });
+  }, []);
+
   return (
     <>
       <>
         <AppBar />
         <MapContainer>
           <GoogleMap
-            googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places"
+            googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${`AIzaSyBTItNGmGoqu4JDuXgG7d6TOaJy8etAw-Y`}`}
             loadingElement={<div style={{ height: `100%` }} />}
             containerElement={<div style={{ height: `100%` }} />}
             mapElement={<div style={{ height: `100%` }} />}
-          />
+          >
+            {storeStamps.map(s => {
+              return (
+                <Marker
+                  key={s.stampNumber}
+                  position={{
+                    lat: s.geopoint.latitude,
+                    lng: s.geopoint.longitude
+                  }}
+                />
+              );
+            })}
+          </GoogleMap>
         </MapContainer>
         <StyledFab onClick={onNewStampRequested} />
         <StyledBottomNav />
