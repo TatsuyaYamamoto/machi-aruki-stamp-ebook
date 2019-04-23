@@ -11,6 +11,7 @@
     "node": "8"
   },
   "scripts": {
+    "start": "webpack-dev-server --config webpack.config.client.js -w",
     "clean": "rm -rf dist",
     "build": "yarn build:client && yarn build:functions",
     "build:client": "   webpack --config webpack.config.client.js    --progress",
