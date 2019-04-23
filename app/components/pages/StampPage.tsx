@@ -19,7 +19,7 @@ const StampPage = () => {
     Stamp.getOwns().then(owns => {
       setStamps(owns);
     });
-  });
+  }, []);
 
   return (
     <>
