@@ -3,75 +3,92 @@ import { firestore } from "firebase-admin";
 import { Base64 } from "js-base64";
 import { parseString } from "xml2js";
 
+const withCatching = (handler: express.RequestHandler) => (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+): express.RequestHandler => {
+  return handler(req, res, next).catch((e: Error) => {
+    console.error(e);
+
+    next(e);
+  });
+};
+
 const apiRouter = express.Router();
 
 apiRouter.get("/", (req, res) => {
   res.json({ root: true });
 });
 
-apiRouter.post("/map", async (req, res) => {
-  // The raw bytes of the upload will be in req.rawBody. Send it to
-  // busboy, and get a callback when it's finished.
+apiRouter.post(
+  "/map",
+  withCatching(async (req, res) => {
+    const { kmlBase64 } = req.body;
 
-  const { kmlBase64 } = req.body;
-
-  if (!kmlBase64) {
-    res.status(400).json({
-      message: "no kml file"
-    });
-    return;
-  }
-
-  const kmlJson = await base64ToJson(kmlBase64);
-  const stamps = [];
-
-  await clearCollection(`master_store_stamps`);
-
-  for (const folder of kmlJson.kml.Document[0].Folder) {
-    if (!folder.Placemark) {
-      console.log("this folder item has no placeMark element");
-      continue;
-    }
-
-    let stampNumber = 0;
-    for (const placeMark of folder.Placemark) {
-      stampNumber += 1;
-
-      const name = placeMark.name[0];
-      const description = placeMark.description[0]
-        .replace(/<img.*\/>/, "")
-        .replace(/<br>/g, " ")
-        .trim();
-      const imageUrl = placeMark.ExtendedData[0].Data[0].value[0];
-      const coordinates = placeMark.Point[0].coordinates[0].trim().split(",");
-      const latitude = Number(coordinates[1]);
-      const longitude = Number(coordinates[0]);
-
-      stamps.push({
-        stampNumber,
-        name,
-        description,
-        imageUrl,
-        geopoint: new firestore.GeoPoint(latitude, longitude)
+    if (!kmlBase64) {
+      console.log("received request has no knl file. return 400");
+      res.status(400).json({
+        message: "no kml file"
       });
+      return;
     }
-  }
 
-  console.log(`${stamps.length} stamps is loaded.`);
+    const kmlJson = await base64ToJson(kmlBase64);
+    console.log("base64 kml file is parsed.");
 
-  const batch = firestore().batch();
+    await clearCollection(`master_store_stamps`);
+    console.log(`clear master_store_stamps collection`);
 
-  for (const stamp of stamps) {
-    const newMasterStoreStampRef = firestore()
-      .collection(`master_store_stamps`)
-      .doc();
-    batch.create(newMasterStoreStampRef, stamp);
-  }
+    const stamps = [];
 
-  await batch.commit();
+    for (const folder of kmlJson.kml.Document[0].Folder) {
+      if (!folder.Placemark) {
+        console.log("ignore folder element having no placemark");
+        continue;
+      }
 
-  res.json({ knl: true });
-});
+      let stampNumber = 0;
+      for (const placeMark of folder.Placemark) {
+        stampNumber += 1;
+
+        const name = placeMark.name[0];
+        const description = placeMark.description[0]
+          .replace(/<img.*\/>/, "")
+          .replace(/<br>/g, " ")
+          .trim();
+        const imageUrl = placeMark.ExtendedData[0].Data[0].value[0];
+        const coordinates = placeMark.Point[0].coordinates[0].trim().split(",");
+        const latitude = Number(coordinates[1]);
+        const longitude = Number(coordinates[0]);
+
+        stamps.push({
+          stampNumber,
+          name,
+          description,
+          imageUrl,
+          geopoint: new firestore.GeoPoint(latitude, longitude)
+        });
+      }
+    }
+
+    console.log(`${stamps.length} stamp docs are created`);
+
+    const batch = firestore().batch();
+
+    for (const stamp of stamps) {
+      const newMasterStoreStampRef = firestore()
+        .collection(`master_store_stamps`)
+        .doc();
+      batch.create(newMasterStoreStampRef, stamp);
+    }
+
+    await batch.commit();
+    console.log(`creation of new master_store_stamps documents  `);
+
+    res.json({});
+  })
+);
 
 /**
  * Clear collection
