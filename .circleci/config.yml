@@ -2,36 +2,70 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2
+version: 2.1
 jobs:
   build:
     docker:
-      # specify the version you desire here
-      - image: circleci/node:8.15.0
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
-
-    working_directory: ~/repo
-
+      - image: circleci/node:8.15.0-browsers
     steps:
       - checkout
+      - restore_node_cache
+      - check_build_environment
+      - run: yarn install
+      - save_node_cache
+      - run: yarn build
+  test:
+    docker:
+      - image: circleci/node:8.15.0-browsers
+    steps:
+      - run: echo TODO!
 
-      # Download and cache dependencies
+  deploy:
+    docker:
+      - image: circleci/node:8.15.0-browsers
+    steps:
+      - checkout
+      - restore_node_cache
+      - check_build_environment
+      - run: yarn install
+      - run: yarn deploy --project machi-aruki-stamp-ebook-dev --token "$FIREBASE_TOKEN"
+
+workflows:
+  version: 2
+  build-test-and-deploy:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only: develop
+
+commands:
+  check_build_environment:
+    steps:
+      - run: node -v
+      - run: npm -v
+      - run: yarn -v
+      - run: pwd
+      - run: find . -maxdepth 1 -type d | xargs ls -la
+
+  # https://circleci.com/docs/ja/2.0/caching/#yarn-node
+  restore_node_cache:
+    steps:
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+            - yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-packages-v1-{{ .Branch }}-
+            - yarn-packages-v1-
 
-      - run: yarn install
-
+  save_node_cache:
+    steps:
       - save_cache:
           paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-
-      # run tests!
-      - run: yarn build
+            - ~/.cache/yarn
+          key: yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
