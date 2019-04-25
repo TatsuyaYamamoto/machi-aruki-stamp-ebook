@@ -1,5 +1,5 @@
 import * as React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
 import { initializeApp, auth } from "firebase/app";
 import "firebase/auth";
@@ -26,12 +26,15 @@ auth()
     User.create(user.user);
   });
 
+const toDefaultPage = () => <Redirect to={`/map`} />;
+
 const Routing = () => (
   <BrowserRouter>
     <Switch>
       <Route path="/map" component={MapPage} />
       <Route path="/store" component={StorePage} />
       <Route path="/stamp" component={StampPage} />
+      <Route path="*" component={toDefaultPage} />
     </Switch>
   </BrowserRouter>
 );
