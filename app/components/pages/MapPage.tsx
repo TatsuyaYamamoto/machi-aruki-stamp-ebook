@@ -3,6 +3,7 @@ import FC = React.FC;
 const { useState, useEffect } = React;
 
 import { firestore } from "firebase/app";
+import { Marker } from "react-google-maps";
 
 import styled from "styled-components";
 
@@ -13,8 +14,9 @@ import BottomNavigation from "../organisms/BottomNavigation";
 import AppBar from "../organisms/AppBar";
 import Fab from "../organisms/Fab";
 import NewStampDialog from "../organisms/NewStampDialog";
+
 import { Spot } from "../../domains/Spot";
-import { Marker } from "react-google-maps";
+import { MEMBERS } from "../../domains/Member";
 
 const MapContainer = styled.div`
   // TODO load '56px' of bottom nav and '64px' app bar height from material-ui theme
@@ -75,12 +77,24 @@ const MapPage: FC = () => {
             mapElement={<div style={{ height: `100%` }} />}
           >
             {storeStamps.map(s => {
+              const member = s.machiArukiStampInfo.member;
+              const color = MEMBERS[member].color;
+              const svg = `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="32px" height="32px">
+                    <path d="M39,19c0,11-15,25-15,25S9,30,9,19a15,15,0,0,1,30,0Z" fill="${color}" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                    <circle cx="24" cy="19" r="5" fill="${"#ffffff"}" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                </svg>`;
+
               return (
                 <Marker
                   key={s.name}
                   position={{
                     lat: s.geopoint.latitude,
                     lng: s.geopoint.longitude
+                  }}
+                  // TODO create as component and check pin location whether it shifts from original marker.
+                  icon={{
+                    url: `data:image/svg+xml;charset=UTF-8;base64,${btoa(svg)}`
                   }}
                   onClick={onMarkerClicked(s)}
                 />
