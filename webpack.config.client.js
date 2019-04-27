@@ -12,7 +12,7 @@ module.exports = {
 
   target: "web",
 
-  devtool: "inline-source-map",
+  devtool: "source-map",
 
   entry: "./app/index.client.tsx",
 

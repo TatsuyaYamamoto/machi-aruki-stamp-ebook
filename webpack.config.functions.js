@@ -8,7 +8,7 @@ module.exports = {
 
   target: "node",
 
-  devtool: "inline-source-map",
+  devtool: "source-map",
 
   entry: "./app/index.functions.ts",
 
