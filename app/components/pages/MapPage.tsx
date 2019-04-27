@@ -1,6 +1,6 @@
 import * as React from "react";
 import FC = React.FC;
-const { useState, useEffect, useMemo } = React;
+const { useState, useEffect, useMemo, useRef } = React;
 
 import { firestore } from "firebase/app";
 import { Marker } from "react-google-maps";
@@ -58,19 +58,15 @@ const MapPage: FC = () => {
   }, []);
 
   const [stampDetail, setStampDetail] = useState<Spot>(null);
-  const mapCenter = useMemo(() => {
-    if (!stampDetail) {
-      return;
-    }
-
-    return {
-      lat: stampDetail.geopoint.latitude,
-      lng: stampDetail.geopoint.longitude
-    };
-  }, [stampDetail]);
+  const mapElement = useRef(null);
 
   const onMarkerClicked = (s: Spot) => () => {
     setStampDetail(s);
+
+    mapElement.current.panTo({
+      lat: s.geopoint.latitude,
+      lng: s.geopoint.longitude
+    });
   };
 
   const closeStampDetailDrawer = () => {
@@ -89,11 +85,11 @@ const MapPage: FC = () => {
         <AppBar />
         <MapContainer>
           <GoogleMap
+            refObject={mapElement}
             googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${`AIzaSyBTItNGmGoqu4JDuXgG7d6TOaJy8etAw-Y`}`}
             loadingElement={<div style={{ height: `100%` }} />}
             containerElement={<div style={{ height: `100%` }} />}
             mapElement={<div style={{ height: `100%` }} />}
-            center={mapCenter}
           >
             {stampDetail ? (
               <Marker
