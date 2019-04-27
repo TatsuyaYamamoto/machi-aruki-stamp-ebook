@@ -130,7 +130,8 @@ const MapPage: FC = () => {
             )}
           </GoogleMap>
         </MapContainer>
-        <StyledFab onClick={onNewStampRequested} />
+        {/* v0 app cannot create my spot.*/}
+        {/*<StyledFab onClick={onNewStampRequested} />*/}
         <StyledBottomNav />
       </>
 

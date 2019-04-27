@@ -6,7 +6,6 @@ import MuiBottomNavigation from "@material-ui/core/BottomNavigation";
 import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
 
 import MapIcon from "@material-ui/icons/Map";
-import DoneIcon from "@material-ui/icons/Done";
 import StoreIcon from "@material-ui/icons/Store";
 
 const toPath = (index: number): string => {
@@ -58,8 +57,7 @@ const BottomNavigation: React.FC<RouteComponentProps> = props => {
       {...others}
     >
       <BottomNavigationAction label="Map" icon={<MapIcon />} />
-      <BottomNavigationAction label="Store" icon={<StoreIcon />} />
-      <BottomNavigationAction label="Stamp" icon={<DoneIcon />} />
+      <BottomNavigationAction label="Spot" icon={<StoreIcon />} />
     </MuiBottomNavigation>
   );
 };
