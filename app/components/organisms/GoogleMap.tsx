@@ -6,10 +6,12 @@ import {
   withGoogleMap,
   withScriptjs
 } from "react-google-maps";
+import * as mapStyleJson from "../../google-map-style.json";
+import MapTypeStyle = google.maps.MapTypeStyle;
 
 const GoogleMap = withScriptjs(
   withGoogleMap<GoogleMapProps>(props => {
-    let mapProps = {};
+    let mapProps: GoogleMapProps = {};
     if (props.center) {
       mapProps = {
         ...mapProps,
@@ -26,7 +28,8 @@ const GoogleMap = withScriptjs(
           zoomControl: false,
           mapTypeControl: false,
           streetViewControl: false,
-          keyboardShortcuts: false
+          keyboardShortcuts: false,
+          styles: mapStyleJson as MapTypeStyle[]
         }}
         {...mapProps}
       >
