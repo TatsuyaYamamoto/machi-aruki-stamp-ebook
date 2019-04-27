@@ -3,17 +3,10 @@ import { firestore } from "firebase-admin";
 import { Base64 } from "js-base64";
 import { parseString } from "xml2js";
 
-const withCatching = (handler: express.RequestHandler) => (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-): express.RequestHandler => {
-  return handler(req, res, next).catch((e: Error) => {
-    console.error(e);
+import { ImportSpotData, Spot } from "./domains/Spot";
+import { from as fromName } from "./domains/Member";
 
-    next(e);
-  });
-};
+import { withCatching } from "./utils/functions";
 
 const apiRouter = express.Router();
 
@@ -35,112 +28,56 @@ apiRouter.post(
     }
 
     const kmlJson = await base64ToJson(kmlBase64);
-    console.log("base64 kml file is parsed.");
+    console.log("base64 kml file is decoded.");
 
-    await clearCollection(`master_store_stamps`);
-    console.log(`clear master_store_stamps collection`);
+    const importData = parseKmlToImportSpotData(kmlJson);
+    console.log(`${importData.length} spots docs are created`);
 
-    const stamps = [];
-
-    for (const folder of kmlJson.kml.Document[0].Folder) {
-      if (!folder.Placemark) {
-        console.log("ignore folder element having no placemark");
-        continue;
-      }
-
-      let stampNumber = 0;
-      for (const placeMark of folder.Placemark) {
-        stampNumber += 1;
-
-        const name = placeMark.name[0];
-        const description = placeMark.description[0]
-          .replace(/<img.*\/>/, "")
-          .replace(/<br>/g, " ")
-          .trim();
-        const imageUrl = placeMark.ExtendedData[0].Data[0].value[0];
-        const coordinates = placeMark.Point[0].coordinates[0].trim().split(",");
-        const latitude = Number(coordinates[1]);
-        const longitude = Number(coordinates[0]);
-
-        stamps.push({
-          stampNumber,
-          name,
-          description,
-          imageUrl,
-          geopoint: new firestore.GeoPoint(latitude, longitude)
-        });
-      }
-    }
-
-    console.log(`${stamps.length} stamp docs are created`);
-
-    const batch = firestore().batch();
-
-    for (const stamp of stamps) {
-      const newMasterStoreStampRef = firestore()
-        .collection(`master_store_stamps`)
-        .doc();
-      batch.create(newMasterStoreStampRef, stamp);
-    }
-
-    await batch.commit();
-    console.log(`creation of new master_store_stamps documents  `);
+    await Spot.import(importData, firestore());
+    console.log(`spots are imported`);
 
     res.json({});
   })
 );
 
-/**
- * Clear collection
- *
- * @link https://firebase.google.com/docs/firestore/manage-data/delete-data?hl=ja
- */
-const clearCollection = (collectionPath: string, batchSize = 100) => {
-  const collectionRef = firestore().collection(collectionPath);
-  const query = collectionRef.orderBy("__name__").limit(batchSize);
+const parseKmlToImportSpotData = (kmlJson: any): ImportSpotData[] => {
+  for (const folder of kmlJson.kml.Document[0].Folder) {
+    if (!folder.Placemark) {
+      console.log("ignore folder element having no placemark");
+      continue;
+    }
 
-  return new Promise((resolve, reject) => {
-    deleteQueryBatch(query, batchSize, resolve, reject);
-  });
-};
+    const spots: ImportSpotData[] = [];
+    let stampNumber = 0;
+    for (const placeMark of folder.Placemark) {
+      stampNumber += 1;
 
-const deleteQueryBatch = (
-  query: firestore.Query,
-  batchSize: number,
-  resolve: () => void,
-  reject: () => void
-) => {
-  query
-    .get()
-    .then(snapshot => {
-      // When there are no documents left, we are done
-      if (snapshot.size === 0) {
-        return 0;
-      }
+      const name = placeMark.name[0];
+      const memberName = placeMark.description[0]
+        .replace(/.*メンバー／/, "")
+        .replace(/住所.+/, "")
+        .replace(/<br>/, "")
+        .trim();
+      const member = fromName(memberName);
 
-      // Delete documents in a batch
-      const batch = firestore().batch();
-      snapshot.docs.forEach(doc => {
-        batch.delete(doc.ref);
+      const stampImageUrl = placeMark.ExtendedData[0].Data[0].value[0];
+      const coordinates = placeMark.Point[0].coordinates[0].trim().split(",");
+      const latitude = Number(coordinates[1]);
+      const longitude = Number(coordinates[0]);
+
+      spots.push({
+        name,
+        geopoint: new firestore.GeoPoint(latitude, longitude),
+        machiArukiStampInfo: {
+          member,
+          stampNumber,
+          stampImageUrl
+        }
       });
+    }
 
-      return batch.commit().then(() => {
-        return snapshot.size;
-      });
-    })
-    .then(numDeleted => {
-      if (numDeleted === 0) {
-        resolve();
-        return;
-      }
-
-      // Recurse on the next process tick, to avoid
-      // exploding the stack.
-      process.nextTick(() => {
-        deleteQueryBatch(query, batchSize, resolve, reject);
-      });
-    })
-    .catch(reject);
+    return spots;
+  }
 };
 
 const base64ToJson = (base64Text: string): Promise<any> => {

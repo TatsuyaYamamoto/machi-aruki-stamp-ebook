@@ -2,24 +2,18 @@ import * as React from "react";
 import FC = React.FC;
 const { useState, useEffect } = React;
 
+import { firestore } from "firebase/app";
+
 import styled from "styled-components";
 
 import Drawer from "@material-ui/core/Drawer";
-import Button from "@material-ui/core/Button";
-import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
 
 import GoogleMap from "../organisms/GoogleMap";
 import BottomNavigation from "../organisms/BottomNavigation";
 import AppBar from "../organisms/AppBar";
 import Fab from "../organisms/Fab";
 import NewStampDialog from "../organisms/NewStampDialog";
-import { StoreStamp } from "../../domains/StoreStamp";
+import { Spot } from "../../domains/Spot";
 import { Marker } from "react-google-maps";
 
 const MapContainer = styled.div`
@@ -51,23 +45,17 @@ const MapPage: FC = () => {
     setOpenNewStampDialog(false);
   };
 
-  const [storeStamps, setStoreStamps] = useState<StoreStamp[]>([]);
+  const [storeStamps, setStoreStamps] = useState<Spot[]>([]);
   useEffect(() => {
     // TODO share docs of store page
-    StoreStamp.getAll().then(stamps => {
-      setStoreStamps(
-        stamps.sort((a, b) => {
-          if (a.stampNumber < b.stampNumber) return 1;
-          if (a.stampNumber > b.stampNumber) return -1;
-          return 0;
-        })
-      );
+    Spot.getAll(firestore()).then(spots => {
+      setStoreStamps(spots);
     });
   }, []);
 
-  const [stampDetail, setStampDetail] = useState<StoreStamp>(null);
+  const [stampDetail, setStampDetail] = useState<Spot>(null);
 
-  const onMarkerClicked = (s: StoreStamp) => () => {
+  const onMarkerClicked = (s: Spot) => () => {
     setStampDetail(s);
   };
 
@@ -89,7 +77,7 @@ const MapPage: FC = () => {
             {storeStamps.map(s => {
               return (
                 <Marker
-                  key={s.stampNumber}
+                  key={s.name}
                   position={{
                     lat: s.geopoint.latitude,
                     lng: s.geopoint.longitude
@@ -109,11 +97,15 @@ const MapPage: FC = () => {
         open={!!stampDetail}
         onClose={closeStampDetailDrawer}
       >
+        {/* TODO */}
         {!!stampDetail && (
           <div style={{ width: 300 }}>
             <div>{stampDetail.name}</div>
-            <img width={200} height={200} src={stampDetail.imageUrl} />
-            <div>{stampDetail.description}</div>
+            <img
+              width={200}
+              height={200}
+              src={stampDetail.machiArukiStampInfo.stampImageUrl}
+            />
           </div>
         )}
       </Drawer>

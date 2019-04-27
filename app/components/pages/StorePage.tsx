@@ -4,6 +4,8 @@ const { useState, useEffect } = React;
 import styled from "styled-components";
 import LazyLoad from "react-lazyload";
 
+import { firestore } from "firebase/app";
+
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
@@ -13,7 +15,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import AppBar from "../organisms/AppBar";
 import BottomNavigation from "../organisms/BottomNavigation";
 
-import { StoreStamp } from "../../domains/StoreStamp";
+import { Spot } from "../../domains/Spot";
 
 const StyledBottomNav = styled(BottomNavigation)`
   position: fixed;
@@ -22,16 +24,10 @@ const StyledBottomNav = styled(BottomNavigation)`
 `;
 
 const StampPage = () => {
-  const [storeStamps, setStoreStamps] = useState<StoreStamp[]>([]);
+  const [storeStamps, setStoreStamps] = useState<Spot[]>([]);
   useEffect(() => {
-    StoreStamp.getAll().then(stamps => {
-      setStoreStamps(
-        stamps.sort((a, b) => {
-          if (a.stampNumber < b.stampNumber) return 1;
-          if (a.stampNumber > b.stampNumber) return -1;
-          return 0;
-        })
-      );
+    Spot.getAll(firestore()).then(spots => {
+      setStoreStamps(spots);
     });
   }, []);
 
@@ -40,15 +36,14 @@ const StampPage = () => {
       <AppBar />
       {storeStamps.map(s => {
         return (
-          <ExpansionPanel key={s.stampNumber}>
+          <ExpansionPanel key={s.name}>
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
               <Typography>{s.name}</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <LazyLoad>
-                <img src={s.imageUrl} />
+                <img src={s.machiArukiStampInfo.stampImageUrl} />
               </LazyLoad>
-              <Typography>{s.description}</Typography>
             </ExpansionPanelDetails>
           </ExpansionPanel>
         );
