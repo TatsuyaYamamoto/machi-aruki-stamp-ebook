@@ -18,6 +18,7 @@
     "build:functions": "webpack --config webpack.config.functions.js --progress",
     "serve": "firebase serve",
     "copy-deps": "yarn cpx '*{package.json,yarn.lock}' dist/functions && yarn --cwd dist/functions",
+    "copy-assets": "yarn cpx 'public/**/*' dist/public",
     "predeploy": "yarn clean && yarn build && yarn copy-deps",
     "deploy": "firebase deploy --project machi-aruki-stamp-ebook-dev",
     "lint": "tslint --format stylish --project tsconfig.json --fix 'app/**/*.ts{,x}'",
