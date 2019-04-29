@@ -7,22 +7,23 @@ import { Marker } from "react-google-maps";
 
 import styled from "styled-components";
 
-import Drawer from "@material-ui/core/Drawer";
 import IconButton from "@material-ui/core/IconButton";
+import MuiDrawer from "@material-ui/core/Drawer";
 import CloseIcon from "@material-ui/icons/Close";
 
 import GoogleMap from "../organisms/GoogleMap";
 import BottomNavigation from "../organisms/BottomNavigation";
-import AppBar from "../organisms/AppBar";
 import Fab from "../organisms/Fab";
 import NewStampDialog from "../organisms/NewStampDialog";
+import SearchTextAppBar from "../organisms/SearchTextAppBar";
+import Drawer from "../organisms/Drawer";
 
 import { Spot } from "../../domains/Spot";
 import { MEMBERS } from "../../domains/Member";
 
 const MapContainer = styled.div`
-  // TODO load '56px' of bottom nav and '64px' app bar height from material-ui theme
-  height: calc(100% - (64px + 56px));
+  // TODO load '56px' of bottom nav height from material-ui theme
+  height: calc(100% - 56px);
 `;
 
 const StyledBottomNav = styled(BottomNavigation)`
@@ -38,6 +39,14 @@ const StyledFab = styled(Fab)`
   bottom: 70px;
   left: auto;
   position: fixed;
+`;
+
+const StyledSearchTextAppBar = styled(SearchTextAppBar)`
+  z-index: 99;
+  position: fixed;
+  width: 80%;
+  top: 20px;
+  left: 10%;
 `;
 
 const MapPage: FC = () => {
@@ -73,6 +82,12 @@ const MapPage: FC = () => {
     setStampDetail(null);
   };
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
   const svg = (color: string) => `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="32px" height="32px">
         <path d="M39,19c0,11-15,25-15,25S9,30,9,19a15,15,0,0,1,30,0Z" fill="${color}" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -82,7 +97,9 @@ const MapPage: FC = () => {
   return (
     <>
       <>
-        <AppBar />
+        <StyledSearchTextAppBar onMenuClicked={handleDrawer} />
+        <Drawer open={drawerOpen} handleClose={handleDrawer} />
+
         <MapContainer>
           <GoogleMap
             refObject={mapElement}
@@ -135,7 +152,7 @@ const MapPage: FC = () => {
         <StyledBottomNav />
       </>
 
-      <Drawer anchor="bottom" variant="persistent" open={!!stampDetail}>
+      <MuiDrawer anchor="bottom" variant="persistent" open={!!stampDetail}>
         <IconButton onClick={closeStampDetailDrawer}>
           <CloseIcon />
         </IconButton>
@@ -150,7 +167,7 @@ const MapPage: FC = () => {
             />
           </div>
         )}
-      </Drawer>
+      </MuiDrawer>
 
       <NewStampDialog
         open={openNewStampDialog}

@@ -2,7 +2,6 @@ import * as React from "react";
 const { useState, useEffect } = React;
 import styled from "styled-components";
 
-import AppBar from "../organisms/AppBar";
 import BottomNavigation from "../organisms/BottomNavigation";
 
 import { Stamp } from "../../domains/Stamp";
@@ -23,7 +22,6 @@ const StampPage = () => {
 
   return (
     <>
-      <AppBar />
       {stamps.map(s => {
         return (
           <div key={s.name}>

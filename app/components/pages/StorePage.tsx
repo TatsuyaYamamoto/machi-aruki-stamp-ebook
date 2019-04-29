@@ -14,6 +14,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import AppBar from "../organisms/AppBar";
 import BottomNavigation from "../organisms/BottomNavigation";
+import Drawer from "../organisms/Drawer";
 
 import { Spot } from "../../domains/Spot";
 
@@ -24,6 +25,11 @@ const StyledBottomNav = styled(BottomNavigation)`
 `;
 
 const StampPage = () => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
   const [storeStamps, setStoreStamps] = useState<Spot[]>([]);
   useEffect(() => {
     Spot.getAll(firestore()).then(spots => {
@@ -33,7 +39,9 @@ const StampPage = () => {
 
   return (
     <>
-      <AppBar />
+      <AppBar onMenuClicked={handleDrawer} />
+      <Drawer open={drawerOpen} handleClose={handleDrawer} />
+
       {storeStamps.map(s => {
         return (
           <ExpansionPanel key={s.name}>
