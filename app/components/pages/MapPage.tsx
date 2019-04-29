@@ -1,15 +1,19 @@
 import * as React from "react";
 import FC = React.FC;
 const { useState, useEffect, useMemo, useRef } = React;
+import { RouteComponentProps } from "react-router-dom";
 
 import { firestore } from "firebase/app";
 import { Marker } from "react-google-maps";
 
 import styled from "styled-components";
 
+import MuiAppBar from "@material-ui/core/AppBar/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import MuiDrawer from "@material-ui/core/Drawer";
 import CloseIcon from "@material-ui/icons/Close";
+import MenuIcon from "@material-ui/icons/Menu";
 
 import GoogleMap from "../organisms/GoogleMap";
 import BottomNavigation from "../organisms/BottomNavigation";
@@ -22,8 +26,7 @@ import { Spot } from "../../domains/Spot";
 import { MEMBERS } from "../../domains/Member";
 
 const MapContainer = styled.div`
-  // TODO load '56px' of bottom nav height from material-ui theme
-  height: calc(100% - 56px);
+  height: 100%;
 `;
 
 const StyledBottomNav = styled(BottomNavigation)`
@@ -41,15 +44,7 @@ const StyledFab = styled(Fab)`
   position: fixed;
 `;
 
-const StyledSearchTextAppBar = styled(SearchTextAppBar)`
-  z-index: 99;
-  position: fixed;
-  width: 80%;
-  top: 20px;
-  left: 10%;
-`;
-
-const MapPage: FC = () => {
+const MapPage: FC<RouteComponentProps> = props => {
   const [openNewStampDialog, setOpenNewStampDialog] = useState(false);
   const onNewStampRequested = () => {
     setOpenNewStampDialog(true);
@@ -88,6 +83,10 @@ const MapPage: FC = () => {
     setDrawerOpen(!drawerOpen);
   };
 
+  const onSearchFieldFocused = () => {
+    props.history.push(`/search`);
+  };
+
   const svg = (color: string) => `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="32px" height="32px">
         <path d="M39,19c0,11-15,25-15,25S9,30,9,19a15,15,0,0,1,30,0Z" fill="${color}" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
@@ -97,7 +96,18 @@ const MapPage: FC = () => {
   return (
     <>
       <>
-        <StyledSearchTextAppBar onMenuClicked={handleDrawer} />
+        <MuiAppBar
+          position="fixed"
+          style={{ background: "transparent", boxShadow: "none" }}
+        >
+          <Toolbar>
+            <SearchTextAppBar
+              icon={<MenuIcon />}
+              onIconClicked={handleDrawer}
+              onFocused={onSearchFieldFocused}
+            />
+          </Toolbar>
+        </MuiAppBar>
         <Drawer open={drawerOpen} handleClose={handleDrawer} />
 
         <MapContainer>
@@ -149,7 +159,7 @@ const MapPage: FC = () => {
         </MapContainer>
         {/* v0 app cannot create my spot.*/}
         {/*<StyledFab onClick={onNewStampRequested} />*/}
-        <StyledBottomNav />
+        {/*<StyledBottomNav />*/}
       </>
 
       <MuiDrawer anchor="bottom" variant="persistent" open={!!stampDetail}>

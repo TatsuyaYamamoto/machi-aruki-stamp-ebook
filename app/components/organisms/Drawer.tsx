@@ -1,7 +1,5 @@
 import * as React from "react";
 
-import styled from "styled-components";
-
 import MuiDrawer from "@material-ui/core/Drawer";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
@@ -10,7 +8,6 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 
-import AppIcon from "@material-ui/icons/AppsSharp";
 import CreatorIcon from "@material-ui/icons/Computer";
 import VersionIcon from "@material-ui/icons/Build";
 import OssIcon from "@material-ui/icons/LibraryBooks";
@@ -19,7 +16,6 @@ import * as packageJson from "../../../package.json";
 import OssLicenseDialog from "./OssLicenseDialog";
 import GuideDialog from "./GuideDialog";
 import MachiArukiStampPageLinkDialog from "./MachiArukiStampPageLinkDialog";
-import SearchTextAppBar from "./SearchTextAppBar";
 
 interface Props {
   open: boolean;
@@ -68,12 +64,6 @@ const Drawer: React.FC<Props> = props => {
 
         <Divider />
         <List subheader={<ListSubheader>概要</ListSubheader>}>
-          <ListItem button={true}>
-            <ListItemIcon>
-              <AppIcon />
-            </ListItemIcon>
-            <ListItemText primary={"アプリについて"} />
-          </ListItem>
           <ListItem button={true}>
             <ListItemIcon>
               <CreatorIcon />

@@ -8,8 +8,7 @@ import "firebase/firestore";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 import MapPage from "./components/pages/MapPage";
-import StorePage from "./components/pages/StorePage";
-import StampPage from "./components/pages/StampPage";
+import SearchPage from "./components/pages/SearchPage";
 
 import { User } from "./domains/User";
 
@@ -32,8 +31,7 @@ const Routing = () => (
   <BrowserRouter>
     <Switch>
       <Route path="/map" component={MapPage} />
-      <Route path="/store" component={StorePage} />
-      <Route path="/stamp" component={StampPage} />
+      <Route path="/search" component={SearchPage} />
       <Route path="*" component={toDefaultPage} />
     </Switch>
   </BrowserRouter>

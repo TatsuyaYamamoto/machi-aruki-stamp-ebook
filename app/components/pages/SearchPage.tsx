@@ -1,34 +1,27 @@
 import * as React from "react";
 const { useState, useEffect } = React;
+import { RouteComponentProps } from "react-router-dom";
 
-import styled from "styled-components";
 import LazyLoad from "react-lazyload";
 
 import { firestore } from "firebase/app";
 
+import Toolbar from "@material-ui/core/Toolbar";
+import MuiAppBar from "@material-ui/core/AppBar/AppBar";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import BackIcon from "@material-ui/icons/ArrowBack";
 
-import AppBar from "../organisms/AppBar";
-import BottomNavigation from "../organisms/BottomNavigation";
-import Drawer from "../organisms/Drawer";
+import SearchTextAppBar from "../organisms/SearchTextAppBar";
 
 import { Spot } from "../../domains/Spot";
 
-const StyledBottomNav = styled(BottomNavigation)`
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-`;
-
-const StampPage = () => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const handleDrawer = () => {
-    setDrawerOpen(!drawerOpen);
+const StampPage: React.FC<RouteComponentProps> = props => {
+  const handleBack = () => {
+    props.history.goBack();
   };
   const [storeStamps, setStoreStamps] = useState<Spot[]>([]);
   useEffect(() => {
@@ -39,8 +32,16 @@ const StampPage = () => {
 
   return (
     <>
-      <AppBar onMenuClicked={handleDrawer} />
-      <Drawer open={drawerOpen} handleClose={handleDrawer} />
+      <MuiAppBar position="static">
+        <Toolbar>
+          <SearchTextAppBar
+            icon={<BackIcon />}
+            onIconClicked={handleBack}
+            onFocused={() => {}}
+            autoFocus={true}
+          />
+        </Toolbar>
+      </MuiAppBar>
 
       {storeStamps.map(s => {
         return (
@@ -56,7 +57,6 @@ const StampPage = () => {
           </ExpansionPanel>
         );
       })}
-      <StyledBottomNav />
     </>
   );
 };

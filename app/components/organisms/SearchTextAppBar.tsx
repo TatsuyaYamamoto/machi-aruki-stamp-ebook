@@ -1,11 +1,11 @@
 import * as React from "react";
+const { useRef, useEffect, useState } = React;
 
 import styled from "styled-components";
 
 import Paper, { PaperProps } from "@material-ui/core/Paper";
 import InputBase, { InputBaseProps } from "@material-ui/core/InputBase";
 import IconButton, { IconButtonProps } from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
 
 const StyledPaper = styled(Paper as React.ComponentClass<PaperProps>)`
   padding: 2px 4px;
@@ -26,18 +26,56 @@ const StyledInput = styled(InputBase as React.ComponentClass<InputBaseProps>)`
 `;
 
 interface Props {
-  onMenuClicked: () => void;
+  icon: React.ComponentElement<any, any>;
+  onIconClicked?: () => void;
+  onBackClicked?: () => void;
+  onFocused?: () => void;
+  autoFocus?: boolean;
 }
 
 const SearchTextAppBar: React.FC<Props> = props => {
-  const { onMenuClicked, ...others } = props;
+  const { icon, onIconClicked, onFocused, autoFocus, ...others } = props;
+  const ref = useRef(null);
+  const [focused, setFocused] = useState(false);
+
+  const onFocusListener = () => {
+    setFocused(true);
+    onFocused();
+  };
+  const onBlurListener = () => {
+    setFocused(false);
+  };
+
+  useEffect(() => {
+    if (onFocused) {
+      ref.current.addEventListener("focus", onFocusListener);
+      ref.current.addEventListener("blur", onBlurListener);
+    }
+    return () => {
+      if (onFocused) {
+        ref.current.removeEventListener("focus", onFocusListener);
+        ref.current.removeEventListener("blur", onBlurListener);
+      }
+    };
+  }, []);
+
+  let appBarStyle = {};
+  if (!focused) {
+    appBarStyle = {
+      ...appBarStyle,
+      background: "transparent",
+      boxShadow: "none"
+    };
+  }
 
   return (
     <StyledPaper elevation={1} {...others}>
-      <StyledIconButton onClick={onMenuClicked}>
-        <MenuIcon />
-      </StyledIconButton>
-      <StyledInput placeholder="Search Spots" />
+      <StyledIconButton onClick={onIconClicked}>{icon}</StyledIconButton>
+      <StyledInput
+        placeholder="Search Spots"
+        inputRef={ref}
+        autoFocus={!!autoFocus}
+      />
     </StyledPaper>
   );
 };
