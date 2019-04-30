@@ -42,6 +42,14 @@ const MapContainer = styled.div`
     `}
 `;
 
+const MapElement = styled.div`
+  height: 100%;
+`;
+
+const MapLoading = styled.div`
+  height: 100%;
+`;
+
 const StyledBottomNav = styled(BottomNavigation)`
   position: fixed;
   bottom: 0;
@@ -117,38 +125,36 @@ const MapPage: FC<RouteComponentProps> = props => {
         </MuiAppBar>
         <Drawer open={drawerOpen} handleClose={handleDrawer} />
 
-        <MapContainer open={!!stampDetail}>
-          <GoogleMap
-            refObject={mapElement}
-            googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${`AIzaSyBTItNGmGoqu4JDuXgG7d6TOaJy8etAw-Y`}`}
-            loadingElement={<div style={{ height: `100%` }} />}
-            containerElement={<div style={{ height: `100%` }} />}
-            mapElement={<div style={{ height: `100%` }} />}
-          >
-            {stampDetail ? (
-              <SpotMarker
-                latitude={stampDetail.geopoint.latitude}
-                longitude={stampDetail.geopoint.longitude}
-                color={MEMBERS[stampDetail.machiArukiStampInfo.member].color}
-              />
-            ) : (
-              storeStamps.map(s => {
-                const member = s.machiArukiStampInfo.member;
-                const color = MEMBERS[member].color;
+        <GoogleMap
+          refObject={mapElement}
+          googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${`AIzaSyBTItNGmGoqu4JDuXgG7d6TOaJy8etAw-Y`}`}
+          loadingElement={<MapLoading />}
+          containerElement={<MapContainer open={!!stampDetail} />}
+          mapElement={<MapElement />}
+        >
+          {stampDetail ? (
+            <SpotMarker
+              latitude={stampDetail.geopoint.latitude}
+              longitude={stampDetail.geopoint.longitude}
+              color={MEMBERS[stampDetail.machiArukiStampInfo.member].color}
+            />
+          ) : (
+            storeStamps.map(s => {
+              const member = s.machiArukiStampInfo.member;
+              const color = MEMBERS[member].color;
 
-                return (
-                  <SpotMarker
-                    key={s.name}
-                    latitude={s.geopoint.latitude}
-                    longitude={s.geopoint.longitude}
-                    color={color}
-                    onClick={onMarkerClicked(s)}
-                  />
-                );
-              })
-            )}
-          </GoogleMap>
-        </MapContainer>
+              return (
+                <SpotMarker
+                  key={s.name}
+                  latitude={s.geopoint.latitude}
+                  longitude={s.geopoint.longitude}
+                  color={color}
+                  onClick={onMarkerClicked(s)}
+                />
+              );
+            })
+          )}
+        </GoogleMap>
         {/* v0 app cannot create my spot.*/}
         {/*<StyledFab onClick={onNewStampRequested} />*/}
         {/*<StyledBottomNav />*/}
