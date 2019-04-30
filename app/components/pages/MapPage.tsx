@@ -6,7 +6,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { firestore } from "firebase/app";
 import { Marker } from "react-google-maps";
 
-import styled from "styled-components";
+import styled, { css, StyledProps } from "styled-components";
 
 import MuiAppBar from "@material-ui/core/AppBar/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -25,8 +25,23 @@ import Drawer from "../organisms/Drawer";
 import { Spot } from "../../domains/Spot";
 import { MEMBERS } from "../../domains/Member";
 
+const drawerWidth = 273; // TODO define clearly
+
+interface MapContainerProps {
+  open: boolean;
+}
+
 const MapContainer = styled.div`
   height: 100%;
+  ${({ open, theme }: StyledProps<MapContainerProps>) =>
+    open &&
+    css`
+      height: calc(100% - ${drawerWidth}px);
+      transition: ${theme.transitions.create(["height"], {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.enteringScreen
+      })};
+    `}
 `;
 
 const StyledBottomNav = styled(BottomNavigation)`
@@ -110,7 +125,7 @@ const MapPage: FC<RouteComponentProps> = props => {
         </MuiAppBar>
         <Drawer open={drawerOpen} handleClose={handleDrawer} />
 
-        <MapContainer>
+        <MapContainer open={!!stampDetail}>
           <GoogleMap
             refObject={mapElement}
             googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${`AIzaSyBTItNGmGoqu4JDuXgG7d6TOaJy8etAw-Y`}`}

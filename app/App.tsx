@@ -5,7 +5,10 @@ import { initializeApp, auth } from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 
+import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
+import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import { ThemeProvider } from "styled-components";
 
 import MapPage from "./components/pages/MapPage";
 import SearchPage from "./components/pages/SearchPage";
@@ -36,11 +39,18 @@ const Routing = () => (
     </Switch>
   </BrowserRouter>
 );
+
+const theme = createMuiTheme({});
+
 const App = () => {
   return (
     <>
-      <CssBaseline />
-      <Routing />
+      <ThemeProvider theme={theme}>
+        <MuiThemeProvider theme={theme}>
+          <CssBaseline />
+          <Routing />
+        </MuiThemeProvider>
+      </ThemeProvider>
     </>
   );
 };
