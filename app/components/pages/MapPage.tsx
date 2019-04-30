@@ -23,7 +23,7 @@ import { MEMBERS } from "../../domains/Member";
 import SpotFocus from "../organisms/SpotFocus";
 import SpotMarker from "../atoms/SpotMarker";
 
-const drawerWidth = 273; // TODO define clearly
+const drawerWidth = 230; // TODO define clearly
 
 interface MapContainerProps {
   open: boolean;
