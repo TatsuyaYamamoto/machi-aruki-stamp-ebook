@@ -24,6 +24,7 @@ import Drawer from "../organisms/Drawer";
 
 import { Spot } from "../../domains/Spot";
 import { MEMBERS } from "../../domains/Member";
+import SpotFocus from "../organisms/SpotFocus";
 
 const drawerWidth = 273; // TODO define clearly
 
@@ -177,22 +178,16 @@ const MapPage: FC<RouteComponentProps> = props => {
         {/*<StyledBottomNav />*/}
       </>
 
-      <MuiDrawer anchor="bottom" variant="persistent" open={!!stampDetail}>
-        <IconButton onClick={closeStampDetailDrawer}>
-          <CloseIcon />
-        </IconButton>
-        {/* TODO */}
-        {!!stampDetail && (
-          <div style={{ width: 300 }}>
-            <div>{stampDetail.name}</div>
-            <img
-              width={200}
-              height={200}
-              src={stampDetail.machiArukiStampInfo.stampImageUrl}
-            />
-          </div>
-        )}
-      </MuiDrawer>
+      {stampDetail && (
+        <SpotFocus
+          open={!!stampDetail}
+          onClose={closeStampDetailDrawer}
+          detail={{
+            name: stampDetail.name,
+            stampImageUrl: stampDetail.machiArukiStampInfo.stampImageUrl
+          }}
+        />
+      )}
 
       <NewStampDialog
         open={openNewStampDialog}
