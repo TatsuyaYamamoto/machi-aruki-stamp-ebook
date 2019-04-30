@@ -1,18 +1,14 @@
 import * as React from "react";
 import FC = React.FC;
-const { useState, useEffect, useMemo, useRef } = React;
+const { useState, useEffect, useRef } = React;
 import { RouteComponentProps } from "react-router-dom";
 
 import { firestore } from "firebase/app";
-import { Marker } from "react-google-maps";
 
 import styled, { css, StyledProps } from "styled-components";
 
 import MuiAppBar from "@material-ui/core/AppBar/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import MuiDrawer from "@material-ui/core/Drawer";
-import CloseIcon from "@material-ui/icons/Close";
 import MenuIcon from "@material-ui/icons/Menu";
 
 import GoogleMap from "../organisms/GoogleMap";
@@ -25,6 +21,7 @@ import Drawer from "../organisms/Drawer";
 import { Spot } from "../../domains/Spot";
 import { MEMBERS } from "../../domains/Member";
 import SpotFocus from "../organisms/SpotFocus";
+import SpotMarker from "../atoms/SpotMarker";
 
 const drawerWidth = 273; // TODO define clearly
 
@@ -103,12 +100,6 @@ const MapPage: FC<RouteComponentProps> = props => {
     props.history.push(`/search`);
   };
 
-  const svg = (color: string) => `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="32px" height="32px">
-        <path d="M39,19c0,11-15,25-15,25S9,30,9,19a15,15,0,0,1,30,0Z" fill="${color}" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-        <circle cx="24" cy="19" r="5" fill="${"#ffffff"}" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-    </svg>`;
-
   return (
     <>
       <>
@@ -135,18 +126,10 @@ const MapPage: FC<RouteComponentProps> = props => {
             mapElement={<div style={{ height: `100%` }} />}
           >
             {stampDetail ? (
-              <Marker
-                key={stampDetail.name}
-                position={{
-                  lat: stampDetail.geopoint.latitude,
-                  lng: stampDetail.geopoint.longitude
-                }}
-                // TODO create as component and check pin location whether it shifts from original marker.
-                icon={{
-                  url: `data:image/svg+xml;charset=UTF-8;base64,${btoa(
-                    svg(MEMBERS[stampDetail.machiArukiStampInfo.member].color)
-                  )}`
-                }}
+              <SpotMarker
+                latitude={stampDetail.geopoint.latitude}
+                longitude={stampDetail.geopoint.longitude}
+                color={MEMBERS[stampDetail.machiArukiStampInfo.member].color}
               />
             ) : (
               storeStamps.map(s => {
@@ -154,18 +137,11 @@ const MapPage: FC<RouteComponentProps> = props => {
                 const color = MEMBERS[member].color;
 
                 return (
-                  <Marker
+                  <SpotMarker
                     key={s.name}
-                    position={{
-                      lat: s.geopoint.latitude,
-                      lng: s.geopoint.longitude
-                    }}
-                    // TODO create as component and check pin location whether it shifts from original marker.
-                    icon={{
-                      url: `data:image/svg+xml;charset=UTF-8;base64,${btoa(
-                        svg(MEMBERS[s.machiArukiStampInfo.member].color)
-                      )}`
-                    }}
+                    latitude={s.geopoint.latitude}
+                    longitude={s.geopoint.longitude}
+                    color={color}
                     onClick={onMarkerClicked(s)}
                   />
                 );
