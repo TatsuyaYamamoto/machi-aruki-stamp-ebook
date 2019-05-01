@@ -13,13 +13,13 @@
   "scripts": {
     "start": "webpack-dev-server --config webpack.config.client.js -w",
     "clean": "rm -rf dist",
-    "build": "yarn build:client && yarn build:functions",
+    "build": "run-p build:client build:functions",
     "build:client": "   webpack --config webpack.config.client.js    --progress",
     "build:functions": "webpack --config webpack.config.functions.js --progress",
     "serve": "firebase serve",
     "copy-deps": "yarn cpx '*{package.json,yarn.lock}' dist/functions && yarn --cwd dist/functions",
     "copy-assets": "yarn cpx 'public/**/*' dist/public",
-    "predeploy": "yarn clean && yarn build && yarn copy-deps",
+    "predeploy": "yarn clean && run-p build copy-deps copy-assets",
     "deploy": "firebase deploy --project machi-aruki-stamp-ebook-dev",
     "lint": "tslint --format stylish --project tsconfig.json --fix 'app/**/*.ts{,x}'",
     "format": "prettier --write 'app/**/*.{js,jsx,ts,tsx}'"
@@ -73,6 +73,7 @@
     "html-webpack-plugin": "^3.2.0",
     "husky": ">=1",
     "lint-staged": ">=8",
+    "npm-run-all": "^4.1.5",
     "prettier": "^1.17.0",
     "ts-loader": "^5.3.3",
     "tslint": "^5.16.0",
