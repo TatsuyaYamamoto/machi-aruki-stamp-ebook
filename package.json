@@ -1,9 +1,9 @@
 {
-  "name": "machi-aruki-stamp-ebook",
+  "name": "numazu-machi-aruki",
   "version": "0.0.1",
   "description": "unofficial ebook of 沼津まちあるきスタンプ",
   "main": "index.js",
-  "repository": "todo",
+  "repository": "github:TatsuyaYamamoto/numazu-machi-aruki",
   "author": "TatsuyaYamamoto <yamamoto.tatsuya@fujixerox.co.jp>",
   "license": "MIT",
   "private": true,

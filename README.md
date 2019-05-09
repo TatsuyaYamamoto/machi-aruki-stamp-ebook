@@ -4,7 +4,7 @@
 
 Hosted in [machi-aruki-stamp-ebook-dev.firebaseapp.com]()
 
-[![CircleCI](https://circleci.com/gh/TatsuyaYamamoto/machi-aruki-stamp-ebook/tree/master.svg?style=svg)](https://circleci.com/gh/TatsuyaYamamoto/machi-aruki-stamp-ebook/tree/master)
+[![CircleCI](https://circleci.com/gh/TatsuyaYamamoto/numazu-machi-aruki/tree/develop.svg?style=svg)](https://circleci.com/gh/TatsuyaYamamoto/numazu-machi-aruki/tree/develop)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
