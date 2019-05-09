@@ -20,7 +20,7 @@
     "copy-deps": "yarn cpx '*{package.json,yarn.lock}' dist/functions && yarn --cwd dist/functions",
     "copy-assets": "yarn cpx 'public/**/*' dist/public",
     "predeploy": "yarn clean && run-p build copy-deps copy-assets",
-    "deploy": "firebase deploy --project machi-aruki-stamp-ebook-dev",
+    "deploy": "firebase deploy --project numazu-machi-aruki-dev",
     "lint": "tslint --format stylish --project tsconfig.json --fix 'app/**/*.ts{,x}'",
     "format": "prettier --write 'app/**/*.{js,jsx,ts,tsx}'"
   },

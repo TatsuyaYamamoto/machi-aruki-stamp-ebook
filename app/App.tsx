@@ -16,9 +16,9 @@ import SearchPage from "./components/pages/SearchPage";
 import { User } from "./domains/User";
 
 initializeApp({
-  apiKey: "AIzaSyBTItNGmGoqu4JDuXgG7d6TOaJy8etAw-Y",
-  projectId: "machi-aruki-stamp-ebook-dev",
-  authDomain: "machi-aruki-stamp-ebook-dev.firebaseapp.com"
+  apiKey: "AIzaSyCfQGifstP7j9cJMMI6sym965OpIlPoKbU",
+  authDomain: "numazu-machi-aruki-dev.firebaseapp.com",
+  projectId: "numazu-machi-aruki-dev"
 });
 
 auth()

@@ -127,7 +127,7 @@ const MapPage: FC<RouteComponentProps> = props => {
 
         <GoogleMap
           refObject={mapElement}
-          googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${`AIzaSyBTItNGmGoqu4JDuXgG7d6TOaJy8etAw-Y`}`}
+          googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${`AIzaSyCfQGifstP7j9cJMMI6sym965OpIlPoKbU`}`}
           loadingElement={<MapLoading />}
           containerElement={<MapContainer open={!!stampDetail} />}
           mapElement={<MapElement />}
