@@ -14,6 +14,11 @@ apiRouter.get("/", (req, res) => {
   res.json({ root: true });
 });
 
+/**
+ * <pre>
+ *   curl -v -X POST https://numazu-machi-aruki-dev.web.app/api/map -H 'Content-Type:application/json' -d "{\"kmlBase64\": \"$(base64 ~/Desktop/numazu.kml)\"}"
+ * </pre>
+ */
 apiRouter.post(
   "/map",
   withCatching(async (req, res) => {
