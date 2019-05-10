@@ -1,10 +1,45 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="robots" content="noindex, nofollow"/>
 
-    <title>沼津まちあるきスタンプe-book</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <% if (noIndex) { %>
+        <meta name=”robots” content=”noindex,follow”/>
+    <% } %>
+
+    <title><%= title %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <meta name="description" content="<%= metaDescription %>"/>
+    <meta name="keyword" content="<%= metaKeyword %>">
+
+    <!-- open graph protocol -->
+    <meta property="og:title" content="<%= ogTitle %>"/>
+    <meta property="og:site_name" content="<%= ogSiteName %>"/>
+    <meta property="og:type" content="article"/>
+    <meta property="og:description" content="<%= ogDescription %>"/>
+    <meta property="og:url" content="<%= ogUrl %>"/>
+    <meta property="og:image" content="<%= ogImage %>"/>
+
+    <!-- Global site tag (tracker.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= trackingCode %>"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+
+      // init ga in mikan/Tracker
+      window.__TRACKING_CODE__ = '<%= trackingCode %>';
+    </script>
+
+    <script>
+      window.addEventListener("error", function(e) {
+        console.error(e);
+        gtag("event", "exception", { description: e.message, fatal: true });
+      });
+    </script>
 </head>
+<body>
 <div id="app"></div>
+</body>
 </html>

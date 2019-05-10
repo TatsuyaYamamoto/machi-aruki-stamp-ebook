@@ -6,6 +6,9 @@
     "tslint-config-prettier"
   ],
   "rulesDirectory": ["tslint-plugin-prettier"],
+  "linterOptions": {
+    "exclude": ["**/*.js"]
+  },
   "rules": {
     "prettier": true,
     // This rule is here for now because of https://github.com/palantir/tslint-react/issues/120
