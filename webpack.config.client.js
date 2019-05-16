@@ -49,7 +49,7 @@ module.exports = {
   },
 
   resolve: {
-    extensions: [".tsx", ".ts", ".js"]
+    extensions: [".tsx", ".ts", ".js", ".txt"]
   },
 
   module: {
@@ -58,6 +58,10 @@ module.exports = {
         test: /\.tsx?$/,
         use: "ts-loader",
         exclude: /node_modules/
+      },
+      {
+        test: /\.txt$/i,
+        use: "raw-loader"
       }
     ]
   },

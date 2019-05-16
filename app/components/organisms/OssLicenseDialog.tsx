@@ -1,15 +1,33 @@
 import * as React from "react";
 
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
+import styled from "styled-components";
 
-import * as packageJson from "../../../package.json";
+import Dialog from "@material-ui/core/Dialog";
+import DialogContent from "@material-ui/core/DialogContent";
+import Slide from "@material-ui/core/Slide";
+import AppBar from "@material-ui/core/AppBar";
+import Typography from "@material-ui/core/Typography";
+import CloseIcon from "@material-ui/icons/Close";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton, { IconButtonProps } from "@material-ui/core/IconButton";
+
+import licenses from "../../../public/assets/licenses.txt";
+
+const Transition = (props: any) => {
+  return <Slide direction="up" {...props} />;
+};
+
+const AppBarSpace = styled.div`
+  flex-grow: 1;
+`;
+
+const CloseButton = styled(IconButton as React.FC<IconButtonProps>)`
+  flex: 1;
+`;
+
+const Content = styled.pre`
+  white-space: pre-line;
+`;
 
 interface Props {
   open: boolean;
@@ -18,27 +36,29 @@ interface Props {
 
 const OssLicenseDialog: React.FC<Props> = props => {
   const { open, handleClose } = props;
-  const onItemClicked = (name: string) => () => {
-    location.href = `https://www.npmjs.com/package/${name}`;
-  };
 
   return (
-    <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>OSS Licenses</DialogTitle>
+    <Dialog
+      fullScreen={true}
+      open={open}
+      onClose={handleClose}
+      TransitionComponent={Transition}
+    >
+      <AppBar position={"relative"}>
+        <Toolbar>
+          <Typography variant="h6" color="inherit">
+            OSS Licenses
+          </Typography>
+          <AppBarSpace />
+          <CloseButton color="inherit" onClick={handleClose}>
+            <CloseIcon />
+          </CloseButton>
+        </Toolbar>
+      </AppBar>
+
       <DialogContent>
-        <List>
-          {Object.keys(packageJson.dependencies).map(name => (
-            <ListItem key={name} button={true} onClick={onItemClicked(name)}>
-              <ListItemText primary={name} />
-            </ListItem>
-          ))}
-        </List>
+        <Content>{licenses}</Content>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} color="primary">
-          OK
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 };
