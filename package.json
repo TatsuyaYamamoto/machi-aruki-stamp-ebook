@@ -13,14 +13,13 @@
   "scripts": {
     "start": "webpack-dev-server --config webpack.config.client.js -w",
     "clean": "rm -rf dist",
-    "build": "run-p build:client build:functions",
+    "build": "npm-run-all clean write-licenses --parallel build:* copy-deps copy-assets",
     "build:client": "   webpack --config webpack.config.client.js    --progress",
     "build:functions": "webpack --config webpack.config.functions.js --progress",
     "serve": "firebase serve",
     "write-licenses": "yarn licenses generate-disclaimer --silent > public/assets/licenses.txt",
     "copy-deps": "yarn cpx '*{package.json,yarn.lock}' dist/functions && yarn --cwd dist/functions",
     "copy-assets": "yarn cpx 'public/**/*' dist/public",
-    "predeploy": "yarn clean && run-p build copy-deps copy-assets",
     "deploy": "firebase deploy --project numazu-machi-aruki-dev",
     "lint": "tslint --format stylish --project tsconfig.json --fix 'app/**/*.ts{,x}'",
     "format": "prettier --write 'app/**/*.{js,jsx,ts,tsx}'"

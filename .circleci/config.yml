@@ -1,43 +1,13 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
 version: 2.1
-jobs:
-  build:
-    docker:
-      - image: circleci/node:8.15.0-browsers
-    steps:
-      - checkout
-      - restore_node_cache
-      - check_build_environment
-      - run: yarn install
-      - save_node_cache
-      - run: yarn build
-  test:
-    docker:
-      - image: circleci/node:8.15.0-browsers
-    steps:
-      - run: echo TODO!
-
-  deploy:
-    docker:
-      - image: circleci/node:8.15.0-browsers
-    steps:
-      - checkout
-      - restore_node_cache
-      - check_build_environment
-      - run: yarn install
-      - run: yarn deploy --project machi-aruki-stamp-ebook-dev --token "$FIREBASE_TOKEN"
 
 workflows:
   version: 2
-  build-test-and-deploy:
+  git-push:
     jobs:
-      - build
+      - dependencies
       - test:
           requires:
-            - build
+            - dependencies
       - deploy:
           requires:
             - test
@@ -45,14 +15,50 @@ workflows:
             branches:
               only: develop
 
+executors:
+  default:
+    docker:
+      - image: circleci/node:8.15.0-browsers
+
+jobs:
+  dependencies:
+    executor:
+      name: default
+    steps:
+      - checkout
+      - restore_node_cache
+      - check_build_environment
+      - run: yarn install
+      - save_node_cache
+
+  test:
+    executor:
+      name: default
+    steps:
+      - prepare_build
+      - check_build_environment
+      - run: yarn build
+      - save_workspace
+
+  deploy:
+    executor:
+      name: default
+    steps:
+      - restore_workspace
+      - check_build_environment
+      - run: yarn --silent deploy --token "$FIREBASE_TOKEN"
+
 commands:
   check_build_environment:
     steps:
-      - run: node -v
-      - run: npm -v
-      - run: yarn -v
-      - run: pwd
-      - run: find . -maxdepth 1 -type d | xargs ls -la
+      - run:
+          name: check build environment
+          command: |
+            node -v
+            npm -v
+            yarn -v
+            pwd
+            find . -maxdepth 1 -type d | xargs ls -la
 
   # https://circleci.com/docs/ja/2.0/caching/#yarn-node
   restore_node_cache:
@@ -69,3 +75,21 @@ commands:
           paths:
             - ~/.cache/yarn
           key: yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+
+  prepare_build:
+    steps:
+      - checkout
+      - restore_node_cache
+      - run: yarn install
+
+  save_workspace:
+    steps:
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  restore_workspace:
+    steps:
+      - attach_workspace:
+          at: .
