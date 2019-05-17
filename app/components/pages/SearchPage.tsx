@@ -4,8 +4,6 @@ import { RouteComponentProps } from "react-router-dom";
 
 import LazyLoad from "react-lazyload";
 
-import { firestore } from "firebase/app";
-
 import Toolbar from "@material-ui/core/Toolbar";
 import MuiAppBar from "@material-ui/core/AppBar/AppBar";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
@@ -16,19 +14,12 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import BackIcon from "@material-ui/icons/ArrowBack";
 
 import SearchTextAppBar from "../organisms/SearchTextAppBar";
-
-import { Spot } from "../../domains/Spot";
+import { SpotContextConsumer } from "../utils/SpotProvider";
 
 const StampPage: React.FC<RouteComponentProps> = props => {
   const handleBack = () => {
     props.history.goBack();
   };
-  const [storeStamps, setStoreStamps] = useState<Spot[]>([]);
-  useEffect(() => {
-    Spot.getAll(firestore()).then(spots => {
-      setStoreStamps(spots);
-    });
-  }, []);
 
   return (
     <>
@@ -43,20 +34,22 @@ const StampPage: React.FC<RouteComponentProps> = props => {
         </Toolbar>
       </MuiAppBar>
 
-      {storeStamps.map(s => {
-        return (
-          <ExpansionPanel key={s.name}>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>{s.name}</Typography>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-              <LazyLoad>
-                <img src={s.machiArukiStampInfo.stampImageUrl} />
-              </LazyLoad>
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
-        );
-      })}
+      <SpotContextConsumer>
+        {({ spots }) =>
+          spots.map(s => (
+            <ExpansionPanel key={s.name}>
+              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography>{s.name}</Typography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>
+                <LazyLoad>
+                  <img src={s.machiArukiStampInfo.stampImageUrl} />
+                </LazyLoad>
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+          ))
+        }
+      </SpotContextConsumer>
     </>
   );
 };

@@ -1,9 +1,7 @@
 import * as React from "react";
 import FC = React.FC;
-const { useState, useEffect, useRef } = React;
+const { useState, useRef } = React;
 import { RouteComponentProps } from "react-router-dom";
-
-import { firestore } from "firebase/app";
 
 import styled, { css, StyledProps } from "styled-components";
 
@@ -22,6 +20,7 @@ import { Spot } from "../../domains/Spot";
 import { MEMBERS } from "../../domains/Member";
 import SpotFocus from "../organisms/SpotFocus";
 import SpotMarker from "../atoms/SpotMarker";
+import { SpotContextConsumer } from "../utils/SpotProvider";
 
 const drawerWidth = 230; // TODO define clearly
 
@@ -74,14 +73,6 @@ const MapPage: FC<RouteComponentProps> = props => {
     setOpenNewStampDialog(false);
   };
 
-  const [storeStamps, setStoreStamps] = useState<Spot[]>([]);
-  useEffect(() => {
-    // TODO share docs of store page
-    Spot.getAll(firestore()).then(spots => {
-      setStoreStamps(spots);
-    });
-  }, []);
-
   const [stampDetail, setStampDetail] = useState<Spot>(null);
   const mapElement = useRef(null);
 
@@ -132,27 +123,33 @@ const MapPage: FC<RouteComponentProps> = props => {
           containerElement={<MapContainer open={!!stampDetail} />}
           mapElement={<MapElement />}
         >
-          {stampDetail ? (
+          {stampDetail && (
             <SpotMarker
               latitude={stampDetail.geopoint.latitude}
               longitude={stampDetail.geopoint.longitude}
               color={MEMBERS[stampDetail.machiArukiStampInfo.member].color}
             />
-          ) : (
-            storeStamps.map(s => {
-              const member = s.machiArukiStampInfo.member;
-              const color = MEMBERS[member].color;
+          )}
 
-              return (
-                <SpotMarker
-                  key={s.name}
-                  latitude={s.geopoint.latitude}
-                  longitude={s.geopoint.longitude}
-                  color={color}
-                  onClick={onMarkerClicked(s)}
-                />
-              );
-            })
+          {!stampDetail && (
+            <SpotContextConsumer>
+              {({ spots }) =>
+                spots.map(s => {
+                  const member = s.machiArukiStampInfo.member;
+                  const color = MEMBERS[member].color;
+
+                  return (
+                    <SpotMarker
+                      key={s.name}
+                      latitude={s.geopoint.latitude}
+                      longitude={s.geopoint.longitude}
+                      color={color}
+                      onClick={onMarkerClicked(s)}
+                    />
+                  );
+                })
+              }
+            </SpotContextConsumer>
           )}
         </GoogleMap>
         {/* v0 app cannot create my spot.*/}

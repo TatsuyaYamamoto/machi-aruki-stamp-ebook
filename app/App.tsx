@@ -12,6 +12,7 @@ import { ThemeProvider } from "styled-components";
 
 import MapPage from "./components/pages/MapPage";
 import SearchPage from "./components/pages/SearchPage";
+import { SpotContextProvider } from "./components/utils/SpotProvider";
 
 import { User } from "./domains/User";
 
@@ -47,8 +48,10 @@ const App = () => {
     <>
       <ThemeProvider theme={theme}>
         <MuiThemeProvider theme={theme}>
-          <CssBaseline />
-          <Routing />
+          <SpotContextProvider>
+            <CssBaseline />
+            <Routing />
+          </SpotContextProvider>
         </MuiThemeProvider>
       </ThemeProvider>
     </>
